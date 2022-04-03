@@ -42,9 +42,17 @@ contract Staker {
         emit Stake(msg.sender, msg.value);
     }
 
+    modifier notCompleted() {
+        require(
+            !exampleExternalContract.completed(),
+            "Staking period has completed"
+        );
+        _;
+    }
+
     // After some `deadline` allow anyone to call an `execute()` function
     //  It should either call `exampleExternalContract.complete{value: address(this).balance}()` to send all the value
-    function execute() public {
+    function execute() public notCompleted {
         uint256 contractBal = address(this).balance;
 
         require(block.timestamp > deadline, "Wait time has not yet expired");
@@ -61,7 +69,7 @@ contract Staker {
     // if the `threshold` was not met, allow everyone to call a `withdraw()` function
 
     // Add a `withdraw()` function to let users withdraw their balance
-    function withdraw() public {
+    function withdraw() public notCompleted {
         // get the stakeholder address
         address _stakeholder = msg.sender;
 
