@@ -16,7 +16,7 @@ contract Staker {
     uint256 public constant threshold = 1 ether;
 
     //set the deadline to 1 week
-    uint256 public deadline = block.timestamp + 72 hours;
+    uint256 public deadline = block.timestamp + 72 minutes;
 
     // get contractBal
     // uint256 private contractBal = address(this).balance;
@@ -61,7 +61,7 @@ contract Staker {
     // if the `threshold` was not met, allow everyone to call a `withdraw()` function
 
     // Add a `withdraw()` function to let users withdraw their balance
-    function withdraw() public view {
+    function withdraw() public {
         // get the stakeholder address
         address _stakeholder = msg.sender;
 
@@ -77,6 +77,9 @@ contract Staker {
         require(stakeholderStakeBal > 0, "You don't have balance to withdraw");
 
         uint stakeholderBalance = _stakeholder.balance;
+
+        // transfer sender's balance to the `_to` address
+        (bool sent, ) = _stakeholder.call{value: stakeholderStakeBal}("");
 
         // Transfer stake stakeholder balance
         stakeholderStakeBal += stakeholderBalance;
